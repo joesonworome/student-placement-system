@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Student Placement Prediction System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef2f7;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
+            border: 1px solid rgba(15, 23, 42, 0.08);
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+            color: white;
+            text-align: center;
+            padding: 32px 24px;
+        }
+
+        .logo-badge {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 14px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.16);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ffffff;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .login-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            letter-spacing: 0.03em;
+        }
+
+        .login-header p {
+            margin: 10px auto 0;
+            opacity: 0.9;
+            max-width: 280px;
+            line-height: 1.5;
+            font-size: 0.98rem;
+        }
+
+        .login-body {
+            padding: 32px 28px 28px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            margin-bottom: 18px;
+            border: 1px solid #d1d5db;
+            border-radius: 14px;
+            background: #f8fafc;
+            color: #0f172a;
+            font-size: 0.96rem;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.14);
+            background: #ffffff;
+        }
+
+        button {
+            width: 100%;
+            background: #198754;
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 14px 28px rgba(25, 135, 84, 0.2);
+            transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            background: #157347;
+            box-shadow: 0 18px 30px rgba(25, 135, 84, 0.22);
+        }
+
+        .errorlist {
+            color: #b91c1c;
+            list-style: none;
+            padding: 0;
+            margin-bottom: 15px;
+        }
+
+        .register-link {
+            margin-top: 18px;
+            text-align: center;
+            color: #475569;
+            font-size: 0.95rem;
+        }
+
+        .register-link a {
+            color: #0d6efd;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <div class="logo-badge"></div>
+            <p>WELCOME TO STUDENT PLACEMENT SYSTEM</p>
+        </div>
+        <div class="login-body">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+
+                <label for="{{ form.username.id_for_label }}">Username</label>
+                {{ form.username }}
+                {{ form.username.errors }}
+
+                <label for="{{ form.password.id_for_label }}">Password</label>
+                {{ form.password }}
+                {{ form.password.errors }}
+
+                <button type="submit">Sign in</button>
+            </form>
+
+            <div class="register-link">
+                Don't have an account? <a href="{% url 'register' %}">Register here</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

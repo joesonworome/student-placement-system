@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .top-bar {
+        background: #ffffff;
+        color: #111827;
+        border-radius: 24px;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+    }
+    .top-bar h2,
+    .top-bar p {
+        color: #111827;
+    }
+    .stat-card {
+        background: #ffffff;
+        color: #111827;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+    }
+    .stat-icon i {
+        color: #2563eb;
+    }
+    .stat-value {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #0f172a;
+    }
+    .stat-label {
+        color: #475569;
+        margin-top: 6px;
+        font-weight: 600;
+    }
+    .feature-card {
+        background: #ffffff;
+        color: #111827;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        box-shadow: 0 16px 30px rgba(15, 23, 42, 0.06);
+    }
+    .feature-card h3,
+    .feature-card p {
+        color: #0f172a;
+    }
+    .feature-icon {
+        font-size: 2.2rem;
+    }
+    .chart-container {
+        background: #ffffff;
+        color: #111827;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        box-shadow: 0 16px 30px rgba(15, 23, 42, 0.08);
+    }
+    .chart-container h3 {
+        color: #0f172a;
+    }
+    .team-section .card {
+        background: #ffffff !important;
+        color: #111827;
+        border: 1px solid rgba(15, 23, 42, 0.08) !important;
+        box-shadow: 0 16px 30px rgba(15, 23, 42, 0.08) !important;
+    }
+    .team-member h4 {
+        color: #0f172a !important;
+    }
+    .team-member p,
+    .team-section p {
+        color: #475569 !important;
+    }
+    .team-section .card-header {
+        background: linear-gradient(135deg, #4f46e5 0%, #2563eb 100%);
+    }
+    .team-section .card-header h3 {
+        color: #f8fafc !important;
+    }
+    .top-bar .logout-btn {
+        width: auto;
+        background: #2563eb;
+        color: #ffffff !important;
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        box-shadow: 0 12px 22px rgba(37, 99, 235, 0.18);
+    }
+    .top-bar .logout-btn:hover {
+        background: #1d4ed8;
+        color: #ffffff !important;
+    }
+</style>
+<div class="top-bar">
+    <div class="welcome-text">
+        <h2>Welcome back, {{ user.username }}!</h2>
+        <p>Here's what's happening with your placement predictions today.</p>
+    </div>
+
+    <div class="user-info">
+        <i class="bi bi-person-circle" style="font-size: 1.5rem;"></i>
+
+        <form method="post" action="{% url 'logout' %}" class="logout-form">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn">Logout</button>
+        </form>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="bi bi-people-fill"></i>
+        </div>
+        <div class="stat-value" id="total-students">0</div>
+        <div class="stat-label">Total Students</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="bi bi-check-circle-fill"></i>
+        </div>
+        <div class="stat-value" id="placed-students">0</div>
+        <div class="stat-label">Placed Students</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="bi bi-graph-up"></i>
+        </div>
+        <div class="stat-value" id="placement-rate">0%</div>
+        <div class="stat-label">Placement Rate</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="bi bi-star-fill"></i>
+        </div>
+        <div class="stat-value" id="avg-cgpa">0.0</div>
+        <div class="stat-label">Average CGPA</div>
+    </div>
+</div>
+
+<h3><i class="bi bi-rocket"></i> Quick Actions</h3>
+<div class="features-grid">
+    <a href="{% url 'upload_data' %}" class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Upload Data</h3>
+        <p>Upload student records (CSV/Excel)</p>
+    </a>
+
+    <a href="{% url 'ml_engine:train_model' %}" class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h3>Train Model</h3>
+        <p>Train ML models for prediction</p>
+    </a>
+
+    <a href="{% url 'ml_engine:predict' %}" class="feature-card">
+        <div class="feature-icon">🔮</div>
+        <h3>Make Predictions</h3>
+        <p>Predict placement chances</p>
+    </a>
+
+    <a href="{% url 'reports:generate_report' %}" class="feature-card">
+        <div class="feature-icon">📄</div>
+        <h3>Generate Reports</h3>
+        <p>Export results (PDF/Excel)</p>
+    </a>
+</div>
+
+<div class="chart-container">
+    <h3><i class="bi bi-bar-chart"></i> Placement Analytics</h3>
+    <canvas id="placementChart" style="max-height: 300px;"></canvas>
+</div>
+
+<div class="team-section">
+    <div class="card" style="background: white; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <div class="card-header"
+            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 10px 10px 0 0; padding: 15px 20px;">
+            <h3 style="margin: 0;"><i class="bi bi-people-fill"></i> Developed By</h3>
+        </div>
+        <div class="card-body" style="padding: 20px;">
+            <div class="team-grid"
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                <div class="team-member" style="text-align: center; padding: 15px;">
+                    <i class="bi bi-person-circle" style="font-size: 3rem; color: #667eea;"></i>
+                    <h4 style="margin: 10px 0 5px; color: #333;">Joeson WOROME</h4>
+                    <p style="color: #666; margin: 0;">Project Lead & ML Engineer</p>
+                </div>
+
+                <div class="team-member" style="text-align: center; padding: 15px;">
+                    <i class="bi bi-person-circle" style="font-size: 3rem; color: #667eea;"></i>
+                    <h4 style="margin: 10px 0 5px; color: #333;">Gladys Kilavo</h4>
+                    <p style="color: #666; margin: 0;">Backend Developer</p>
+                </div>
+
+                <div class="team-member" style="text-align: center; padding: 15px;">
+                    <i class="bi bi-person-circle" style="font-size: 3rem; color: #667eea;"></i>
+                    <h4 style="margin: 10px 0 5px; color: #333;">Clifford WHITES</h4>
+                    <p style="color: #666; margin: 0;">Frontend Developer</p>
+                </div>
+
+                <div class="team-member" style="text-align: center; padding: 15px;">
+                    <i class="bi bi-person-circle" style="font-size: 3rem; color: #667eea;"></i>
+                    <h4 style="margin: 10px 0 5px; color: #333;">Tayon BUNN</h4>
+                    <p style="color: #666; margin: 0;">Data Scientist</p>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee;">
+                <p style="color: #666; margin: 0;">
+                    <i class="bi bi-calendar3"></i> March 2026 |
+                    <i class="bi bi-github"></i> Student Placement Prediction System
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let placementChartInstance = null;
+
+    function loadStats() {
+        $.ajax({
+            url: "{% url 'dashboard_stats' %}",
+            method: "GET",
+            success: function (data) {
+                $("#total-students").text(data.total_students);
+                $("#placed-students").text(data.placed_students);
+                $("#placement-rate").text(data.placement_rate + "%");
+                $("#avg-cgpa").text(data.avg_cgpa);
+
+                if (placementChartInstance) {
+                    placementChartInstance.destroy();
+                }
+
+                const notPlaced = Math.max(0, data.total_students - data.placed_students);
+
+                placementChartInstance = new Chart(document.getElementById("placementChart"), {
+                    type: "doughnut",
+                    data: {
+                        labels: ["Placed", "Not Placed"],
+                        datasets: [{
+                            data: [data.placed_students, notPlaced],
+                            backgroundColor: ["#28a745", "#dc3545"],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                position: "bottom"
+                            }
+                        }
+                    }
+                });
+            },
+            error: function () {
+                console.log("Could not load dashboard statistics.");
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        loadStats();
+    });
+</script>
+{% endblock %}

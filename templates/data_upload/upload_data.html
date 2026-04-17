@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+    <style>
+        .card {
+            background: rgba(255, 255, 255, 0.96) !important;
+            color: #111827 !important;
+            border-color: rgba(15, 23, 42, 0.08) !important;
+        }
+        .card-body,
+        .card-body label,
+        .card-body .form-label,
+        .table th,
+        .table td,
+        .table {
+            color: #111827 !important;
+        }
+        .table thead th {
+            background: rgba(241, 245, 249, 0.95);
+        }
+        .badge.bg-warning.text-dark {
+            background-color: #fbbf24 !important;
+            color: #1f2937 !important;
+        }
+        .btn-primary {
+            background: #2563eb;
+            border-color: #2563eb;
+        }
+        .btn-primary:hover {
+            background: #1d4ed8;
+            border-color: #1e40af;
+        }
+    </style>
+    <h2 class="mb-4">Upload Student Dataset</h2>
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Dataset Name</label>
+                    {{ form.name }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Choose CSV / Excel File</label>
+                    {{ form.file }}
+                </div>
+                <button type="submit" class="btn btn-primary">Upload Dataset</button>
+            </form>
+        </div>
+    </div>
+
+    <h4>Your Uploaded Datasets</h4>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            {% if datasets %}
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Rows</th>
+                        <th>Columns</th>
+                        <th>Uploaded At</th>
+                        <th>Processed</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dataset in datasets %}
+                    <tr>
+                        <td>{{ dataset.name }}</td>
+                        <td>{{ dataset.row_count }}</td>
+                        <td>{{ dataset.column_count }}</td>
+                        <td>{{ dataset.uploaded_at }}</td>
+                        <td>
+                            {% if dataset.is_processed %}
+                            <span class="badge bg-success">Yes</span>
+                            {% else %}
+                            <span class="badge bg-warning text-dark">No</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'preview_dataset' dataset.id %}" class="btn btn-info btn-sm">Preview</a>
+                            <a href="{% url 'preprocess_data' dataset.id %}"
+                                class="btn btn-secondary btn-sm">Preprocess</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>No datasets uploaded yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

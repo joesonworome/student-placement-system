@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+    <h2>Preprocessing Result: {{ dataset.name }}</h2>
+
+    <div class="row my-4">
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm">
+                <strong>Rows Before:</strong> {{ before_rows }}<br>
+                <strong>Rows After:</strong> {{ after_rows }}
+                <p class="text-muted mb-0">Shows how many rows remained after preprocessing.</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm">
+                <strong>Columns Before:</strong> {{ before_cols }}<br>
+                <strong>Columns After:</strong> {{ after_cols }}
+                <p class="text-muted mb-0">Column count may change if categorical encoding adds or preserves features.</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm">
+                <strong>Missing Before:</strong> {{ missing_before }}<br>
+                <strong>Missing After:</strong> {{ missing_after }}
+                <p class="text-muted mb-0">The number of blank cells remaining in the dataset.</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm">
+                <strong>Duplicates Before:</strong> {{ duplicates_before }}<br>
+                <strong>Duplicates After:</strong> {{ duplicates_after }}
+                <p class="text-muted mb-0">Duplicate rows removed by the preprocessing step.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h4>Encoded Columns</h4>
+            {% if encoded_columns %}
+            <ul>
+                {% for col in encoded_columns %}
+                <li>{{ col }}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>No categorical columns were encoded.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h4>Processed Data Preview</h4>
+            {{ preview_html|safe }}
+        </div>
+    </div>
+
+    {% if dataset.processed_file %}
+    <a href="{{ dataset.processed_file.url }}" class="btn btn-success">Download Processed CSV</a>
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+    <h2>Preprocess Dataset: {{ dataset.name }}</h2>
+
+    <div class="row my-4">
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm">
+                <strong>Rows:</strong> {{ before_rows }}
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm">
+                <strong>Columns:</strong> {{ before_cols }}
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm">
+                <strong>Missing Values:</strong> {{ missing_before }}
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm">
+                <strong>Duplicates:</strong> {{ duplicates_before }}
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label class="form-label">Handle Missing Values</label>
+                    <select name="handle_missing" class="form-select">
+                        <option value="none">Do Nothing</option>
+                        <option value="drop">Drop Rows with Missing Values</option>
+                        <option value="fill">Fill Missing Values</option>
+                    </select>
+                    <div class="form-text text-muted">Choose whether to leave missing values, remove incomplete rows, or fill them automatically.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Remove Duplicates</label>
+                    <select name="remove_duplicates" class="form-select">
+                        <option value="no">No</option>
+                        <option value="yes">Yes</option>
+                    </select>
+                    <div class="form-text text-muted">Remove duplicate records from the dataset to avoid repeated rows.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Encode Categorical Columns</label>
+                    <select name="encode_categorical" class="form-select">
+                        <option value="no">No</option>
+                        <option value="yes">Yes</option>
+                    </select>
+                    <div class="form-text text-muted">Convert text fields into numeric codes so models can use categorical data.</div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Run Preprocessing</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

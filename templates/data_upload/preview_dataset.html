@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+    <h2>Dataset Preview: {{ dataset.name }}</h2>
+
+    <div class="row my-3">
+        <div class="col-md-4">
+            <div class="card p-3 shadow-sm">
+                <strong>Rows:</strong> {{ shape.0 }}
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-3 shadow-sm">
+                <strong>Columns:</strong> {{ shape.1 }}
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-3 shadow-sm">
+                <strong>Uploaded:</strong> {{ dataset.uploaded_at }}
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h4>Columns</h4>
+            <ul>
+                {% for col in columns %}
+                <li>{{ col }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h4>Missing Values</h4>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Column</th>
+                        <th>Missing Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for col, value in missing_values.items %}
+                    <tr>
+                        <td>{{ col }}</td>
+                        <td>{{ value }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h4>Data Preview</h4>
+            {{ preview_html|safe }}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
