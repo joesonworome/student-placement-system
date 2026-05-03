@@ -129,6 +129,9 @@ MEDIA_ROOT = BASE_DIR / "media"
 # Default primary key field
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# File upload size limit (10MB)
+MAX_UPLOAD_SIZE = 10 * 1024 * 1024  # 10MB in bytes
+
 # Authentication / Login URLs
 LOGIN_URL = "/accounts/login/"
 LOGIN_REDIRECT_URL = "/"

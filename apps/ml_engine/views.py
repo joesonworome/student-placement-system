@@ -31,7 +31,7 @@ def train_model(request):
             predictor = PlacementPredictor()
             
             # Train the model
-            metrics, probabilities = predictor.train_model(df, algorithm)
+            metrics, probabilities = predictor.train_model(df, algorithm, test_size)
             
             # Save model
             model_path = os.path.join(settings.MEDIA_ROOT, 'placement_model.pkl')
@@ -85,13 +85,19 @@ def make_prediction(request):
     predictor = PlacementPredictor()
     predictor.load_model(model_path)
     
+    student_data = {
+        'student_id': '',
+        'cgpa': '',
+        'skills': ''
+    }
+
     if request.method == 'POST':
         # Get student data from form
-        student_data = {}
-        
-        # Required fields
         if 'cgpa' in request.POST:
-            student_data['cgpa'] = float(request.POST.get('cgpa', 0))
+            try:
+                student_data['cgpa'] = float(request.POST.get('cgpa', 0))
+            except ValueError:
+                student_data['cgpa'] = 0.0
         
         if 'skills' in request.POST:
             student_data['skills'] = request.POST.get('skills', '')
@@ -115,10 +121,10 @@ def make_prediction(request):
             return render(request, 'ml_engine/predict.html', context)
         except Exception as e:
             messages.error(request, f'Error making prediction: {str(e)}')
-            return render(request, 'ml_engine/predict.html')
-    
+            return render(request, 'ml_engine/predict.html', {'student_data': student_data})
+
     # GET request - show prediction form
-    return render(request, 'ml_engine/predict.html')
+    return render(request, 'ml_engine/predict.html', {'student_data': student_data})
 
 @login_required
 def list_models(request):

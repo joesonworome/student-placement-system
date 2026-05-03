@@ -39,7 +39,9 @@ class PlacementPredictor:
                     data[col] = self.label_encoders[col].fit_transform(data[col])
                 else:
                     if col in self.label_encoders:
-                        data[col] = self.label_encoders[col].transform(data[col])
+                        encoder = self.label_encoders[col]
+                        mapping = {value: index for index, value in enumerate(encoder.classes_)}
+                        data[col] = data[col].map(lambda x: mapping.get(x, -1)).astype(int)
         
         # Handle missing values
         data = data.fillna(data.mean())
@@ -62,13 +64,13 @@ class PlacementPredictor:
             
         return X_scaled, y
     
-    def train_model(self, df, model_name='random_forest'):
+    def train_model(self, df, model_name='random_forest', test_size=0.2):
         """Train the selected model"""
         X, y = self.preprocess_data(df, fit=True)
         
         # Split the data
         X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=42, stratify=y
+            X, y, test_size=test_size, random_state=42, stratify=y
         )
         
         # Select and train model

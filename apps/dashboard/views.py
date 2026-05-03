@@ -3,7 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 import pandas as pd
 import os
+import logging
 from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -32,7 +35,8 @@ def get_dashboard_stats(request):
             else:
                 avg_cgpa = 0
 
-        except Exception:
+        except Exception as e:
+            logger.exception("Error reading dashboard data file: %s", data_file)
             total_students = 0
             placed_students = 0
             placement_rate = 0
