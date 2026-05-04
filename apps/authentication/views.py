@@ -1,11 +1,10 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 # NEW imports for student
 from .models import Student
-from .forms import StudentForm
+from .forms import StudentForm, SignupForm
 
 
 # -------------------------------
@@ -13,13 +12,13 @@ from .forms import StudentForm
 # -------------------------------
 def register(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = SignupForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, 'Account created successfully! You can now login.')
             return redirect('login')
     else:
-        form = UserCreationForm()
+        form = SignupForm()
 
     return render(request, 'registration/register.html', {'form': form})
 

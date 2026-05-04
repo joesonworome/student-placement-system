@@ -31,19 +31,6 @@
         margin-top: 6px;
         font-weight: 600;
     }
-    .feature-card {
-        background: #ffffff;
-        color: #111827;
-        border: 1px solid rgba(15, 23, 42, 0.08);
-        box-shadow: 0 16px 30px rgba(15, 23, 42, 0.06);
-    }
-    .feature-card h3,
-    .feature-card p {
-        color: #0f172a;
-    }
-    .feature-icon {
-        font-size: 2.2rem;
-    }
     .chart-container {
         background: #ffffff;
         color: #111827;
@@ -133,33 +120,6 @@
         <div class="stat-value" id="avg-cgpa">0.0</div>
         <div class="stat-label">Average CGPA</div>
     </div>
-</div>
-
-<h3><i class="bi bi-rocket"></i> Quick Actions</h3>
-<div class="features-grid">
-    <a href="{% url 'upload_data' %}" class="feature-card">
-        <div class="feature-icon">📊</div>
-        <h3>Upload Data</h3>
-        <p>Upload student records (CSV/Excel)</p>
-    </a>
-
-    <a href="{% url 'ml_engine:train_model' %}" class="feature-card">
-        <div class="feature-icon">🤖</div>
-        <h3>Train Model</h3>
-        <p>Train ML models for prediction</p>
-    </a>
-
-    <a href="{% url 'ml_engine:predict' %}" class="feature-card">
-        <div class="feature-icon">🔮</div>
-        <h3>Make Predictions</h3>
-        <p>Predict placement chances</p>
-    </a>
-
-    <a href="{% url 'reports:generate_report' %}" class="feature-card">
-        <div class="feature-icon">📄</div>
-        <h3>Generate Reports</h3>
-        <p>Export results (PDF/Excel)</p>
-    </a>
 </div>
 
 <div class="chart-container">

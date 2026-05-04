@@ -61,6 +61,7 @@
 
         .form-group input {
             width: 100%;
+            box-sizing: border-box;
             padding: 14px 16px;
             border: 1px solid #cfd8e9;
             border-radius: 14px;
@@ -68,7 +69,15 @@
             background: rgba(255, 255, 255, 0.95);
         }
 
-        button {
+        .errorlist {
+            list-style: none;
+            padding: 0;
+            margin: 8px 0 0;
+            font-size: 13px;
+            color: #a41f1f;
+        }
+
+        button[type="submit"] {
             width: 100%;
             padding: 14px;
             border: none;
@@ -82,16 +91,17 @@
             transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
         }
 
-        button:hover {
+        button[type="submit"]:hover {
             transform: translateY(-2px);
             box-shadow: 0 18px 30px rgba(26, 115, 232, 0.32);
             opacity: 0.96;
         }
 
         .login-link {
-            margin-top: 18px;
+            margin-top: 20px;
             text-align: center;
             color: #1a3c80;
+            font-size: 15px;
         }
 
         .login-link a {
@@ -101,49 +111,42 @@
         }
 
         .login-link a:hover {
-            color: #ffea3a;
             text-decoration: underline;
-        }
-
-        .message {
-            padding: 12px 14px;
-            border-radius: 10px;
-            margin-bottom: 16px;
-            font-size: 14px;
-        }
-        .success {
-            background: #e6f4ea;
-            color: #1a6f3b;
-            border: 1px solid #c5e3d0;
-        }
-        .error {
-            background: #fdecea;
-            color: #a41f1f;
-            border: 1px solid #f5c2c0;
         }
     </style>
 </head>
 <body>
     <div class="register-container">
-        <h2>Create Your Account</h2>
-
-        {% if messages %}
-            {% for message in messages %}
-                <div class="message {{ message.tags }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
+        <h2>Create your account</h2>
 
         <form method="post">
             {% csrf_token %}
-            {{ form.as_p }}
+            {{ form.non_field_errors }}
+
+            <div class="form-group">
+                {{ form.username.label_tag }}
+                {{ form.username }}
+                {{ form.username.errors }}
+            </div>
+
+            <div class="form-group">
+                {{ form.password1.label_tag }}
+                {{ form.password1 }}
+                {{ form.password1.errors }}
+            </div>
+
+            <div class="form-group">
+                {{ form.password2.label_tag }}
+                {{ form.password2 }}
+                {{ form.password2.errors }}
+            </div>
+
             <button type="submit">Register</button>
         </form>
 
-        <div class="login-link">
-            Already have an account? <a href="{% url 'login' %}">Login here</a>
-        </div>
+        <p class="login-link">
+            Already have an account? <a href="{% url 'login' %}">Log in</a>
+        </p>
     </div>
 </body>
 </html>
