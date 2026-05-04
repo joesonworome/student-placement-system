@@ -13,14 +13,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-your-dev-key-here-change-this")
 DEBUG = os.environ.get("DEBUG", "True") == "True"
 
-# Host validation: default list misses IPv6 [::1], LAN IPs, and machine names — those yield 400 DisallowedHost.
+# Host validation: keep an explicit default (never "*") so the Host header is always checked in dev and prod.
+# For another hostname (e.g. LAN IP), set ALLOWED_HOSTS in the environment to a comma-separated list.
 _hosts_env = os.environ.get("ALLOWED_HOSTS", "").strip()
 if _hosts_env:
     ALLOWED_HOSTS = [h.strip() for h in _hosts_env.split(",") if h.strip()]
-elif DEBUG:
-    ALLOWED_HOSTS = ["*"]
 else:
-    ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+    ALLOWED_HOSTS = [
+        "127.0.0.1",
+        "localhost",
+        "[::1]",
+        "testserver",
+    ]
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
 if RENDER_EXTERNAL_HOSTNAME and RENDER_EXTERNAL_HOSTNAME not in ALLOWED_HOSTS:

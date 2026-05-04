@@ -1,13 +1,16 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.http import HttpResponse, JsonResponse
-from django.conf import settings
-import pandas as pd
-import os
-from datetime import datetime
 import csv
 import io
+import os
+from datetime import datetime
+
+import pandas as pd
+from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import redirect, render
+
+from apps.data_uploads.training_data import load_user_student_dataframe
 
 try:
     from reportlab.lib.pagesizes import letter
@@ -22,14 +25,16 @@ except ImportError:
 # ================================
 @login_required
 def generate_report(request):
-    data_path = os.path.join(settings.MEDIA_ROOT, 'student_data.csv')
-
-    # Check if file exists
-    if not os.path.exists(data_path):
-        messages.error(request, 'No data found. Please upload data first.')
-        return redirect('upload_data')
-
-    df = pd.read_csv(data_path)
+    df, err = load_user_student_dataframe(request.user)
+    if err == "no_dataset":
+        messages.error(request, "No data found. Please upload a dataset under Upload Data first.")
+        return redirect("upload_data")
+    if err:
+        messages.error(request, f"Could not read dataset: {err}")
+        return redirect("upload_data")
+    if df is None:
+        messages.error(request, "No data found. Please upload a dataset first.")
+        return redirect("upload_data")
 
     # ================================
     # HANDLE POST (GENERATE REPORT)
@@ -264,12 +269,9 @@ def download_report(request):
     report_type = request.GET.get('type', 'placement_summary')
     format_type = request.GET.get('format', 'csv')
 
-    data_path = os.path.join(settings.MEDIA_ROOT, 'student_data.csv')
-
-    if not os.path.exists(data_path):
+    df, err = load_user_student_dataframe(request.user)
+    if err or df is None:
         return HttpResponse("No data found", status=404)
-
-    df = pd.read_csv(data_path)
 
     if report_type == 'placement_summary':
         return generate_summary_report(df, format_type)
