@@ -42,9 +42,17 @@ class PlacementPredictor:
                         encoder = self.label_encoders[col]
                         mapping = {value: index for index, value in enumerate(encoder.classes_)}
                         data[col] = data[col].map(lambda x: mapping.get(x, -1)).astype(int)
-        
-        # Handle missing values
-        data = data.fillna(data.mean())
+
+        if not fit and self.feature_names is not None:
+            for col in self.feature_names:
+                if col not in data.columns:
+                    data[col] = np.nan
+            data = data.loc[:, list(self.feature_names)]
+
+        # Handle missing values (numeric only; avoids string columns e.g. student_id on predict)
+        num = data.select_dtypes(include=[np.number])
+        if not num.empty:
+            data[num.columns] = num.fillna(num.mean())
         
         # Separate features and target if target exists
         if 'placement_status' in data.columns:
